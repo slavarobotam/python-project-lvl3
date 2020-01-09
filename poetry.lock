@@ -228,8 +228,8 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pathlib2", "contextlib2", "unittest2"]
 
 [metadata]
-content-hash = "a3d160668d7dbd832d4f89ba7ca0fabb460428c8ae0e8f36df6809a73876b6a5"
-python-versions = "^3.7"
+content-hash = "7dd0bf903fd2d80fd65baee100f7623b9449fd534e583981d7681437e14ca93d"
+python-versions = "^3.6"
 
 [metadata.files]
 atomicwrites = [
