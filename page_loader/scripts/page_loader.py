@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-from page_loader.engine import engine
+from page_loader.engine import parser, engine
 
 
 def main():
-    engine()
+    args = parser.parse_args()
+    engine(args)
 
 
 if __name__ == '__main__':

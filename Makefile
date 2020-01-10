@@ -8,6 +8,9 @@ lint:
 	@poetry run flake8 --ignore=F401
 
 run:
-	@poetry run page-loader
+	@poetry run page-loader https://slavarobotam.github.io/
 
+publish:
+	@poetry build
+	@poetry publish -r ott45
 .PHONY: install test lint

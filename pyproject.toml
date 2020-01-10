@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "slavarobotam_page_loader"
-version = "0.1.0"
+version = "1.0.2"
 description = "Utility for downloading pages"
 authors = ["Mari <zefiratakuet@yandex.ru>"]
 packages = [
@@ -9,11 +9,14 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
+
+[tool.poetry.dev-dependencies]
 pytest = "^5.3.2"
 pytest-cov = "^2.8.1"
 flake8 = "^3.7.9"
-
-[tool.poetry.dev-dependencies]
+requests = "^2.22.0"
+bs4 = "^0.0.1"
+rope = "^0.14.0"
 
 [tool.poetry.scripts]
 page-loader = "page_loader.scripts.page_loader:main"
