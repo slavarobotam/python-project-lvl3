@@ -1,27 +1,22 @@
-import argparse
 import requests
 import os
 from page_loader.get_storage_path import get_storage_path
 
-DEFAULT_DIRECTORY = os.getcwd()
 
-parser = argparse.ArgumentParser(description='Loading page utility')
-parser.add_argument('url')
-parser.add_argument('-o', '--output',
-                    default=DEFAULT_DIRECTORY,
-                    type=str,
-                    help='Directory to store the page')
-
-
-def write_to_file(url, storage_path):
+def _get_page_source(url):
     response_object = requests.get(url)
     text = response_object.text
+    return text
+
+
+def _write_to_file(text, storage_dir, url):
+    if not os.path.exists(storage_dir):
+        os.makedirs(storage_dir)
+    storage_path = get_storage_path(storage_dir, url)
     with open(storage_path, 'w') as storage_file:
         storage_file.write(text)
 
 
-def engine(args):
-    url = args.url
-    dir = args.output
-    storage_path = get_storage_path(dir, url)
-    write_to_file(url, storage_path)
+def engine(storage_dir, url):
+    page_source = _get_page_source(url)
+    _write_to_file(page_source, storage_dir, url)

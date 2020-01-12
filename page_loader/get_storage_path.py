@@ -4,26 +4,20 @@ DELIMITER = '-'
 EXTENSION = 'html'
 
 
-def _get_storage_filename(url):
+def get_storage_path(storage_dir, url):
     normalised_url = os.path.normpath(url).lower()
 
     # remove scheme
-    path_components = normalised_url.split(os.sep)
-    del path_components[0]
+    url_components = normalised_url.split(os.sep)
+    del url_components[0]
 
-    # replace punctuation with delimiter
-    path_with_punctuation = DELIMITER.join(path_components)
-    clean_name = ''
-    for letter in path_with_punctuation:
-        clean_name += (letter if letter.isalnum() else DELIMITER)
+    # replace non alphanumeric letters with delimiter
+    non_alphanum_name = DELIMITER.join(url_components)
+    name_with_delimiters = ''
+    for letter in non_alphanum_name:
+        name_with_delimiters += (letter if letter.isalnum() else DELIMITER)
 
     # add extention to filename
-    name_with_ext = '{}.{}'.format(clean_name, EXTENSION)
-
-    return name_with_ext
-
-
-def get_storage_path(dir, url):
-    filename = _get_storage_filename(url)
-    path = os.path.join(dir, filename)
-    return path
+    name_with_ext = '{}.{}'.format(name_with_delimiters, EXTENSION)
+    storage_path = os.path.join(storage_dir, name_with_ext)
+    return storage_path
