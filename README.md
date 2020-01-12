@@ -4,13 +4,13 @@
 
 Page_loader is a free and easy-to-use utility for downloading pages.
 
-###Installation:
+### Installation:
 
 ```sh
 $ pip install --user --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ slavarobotam_page_loader
 ```
 
-###How to use
+### How to use
 
 If you want to download a page, just run:
 ``` bash
@@ -23,7 +23,7 @@ $ page-loader -o=mydownloads https://example.com/
 ```
 Default storage is your current working directory.
 
-###Installation and base functionality
+### Installation and base functionality
 
 [![asciicast](https://asciinema.org/a/293203.svg)](https://asciinema.org/a/293203)
 
