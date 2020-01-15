@@ -7,7 +7,8 @@ Page_loader is a free and easy-to-use utility for downloading pages.
 ### Installation:
 
 ```sh
-$ pip install --user --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ slavarobotam_page_loader
+$ pip install --user --index-url https://test.pypi.org/simple/ \
+    --extra-index-url https://pypi.org/simple/ slavarobotam_page_loader
 ```
 
 ### How to use
