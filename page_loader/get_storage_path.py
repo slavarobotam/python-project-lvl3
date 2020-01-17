@@ -3,45 +3,47 @@ from urllib.parse import urlparse
 
 
 DELIMITER = '-'
-PAGE = 'page'
-DIR = 'dir'
 SPECIAL_ENTITY_TYPES = {
-    DIR: '_files',
-    PAGE: '.html'
+    'dir': '_files',
+    'page': '.html'
 }
 
 
-def _get_alphanum_name(path):
+def make_alphanum(name):
     """Replace all non-alphanumeric characters with delimeter"""
     alphanum_name = ''
-    for letter in path:
+    for letter in name:
         alphanum_name += (letter if letter.isalnum() else DELIMITER)
     return alphanum_name
 
 
-def get_storage_path(storage_dir, url, entity_type=None):
-    """Generates storage path for the required entity type.
+def get_path(url, storage_dir, entity=None):
+    """Creates name from path for the required entity type.
 
-    If entity type is in SPECIAL_ENTITY_TYPES, adds appropriate ending
-    to the path.
-    Otherwise path retains the original extension if there is one.
+    If entity type is in SPECIAL_ENTITY_TYPES, adds appropriate ending.
+    Otherwise filename retains the original extension if there is one.
     """
     normalised_url = os.path.normpath(url)
-    parsed_url = urlparse(normalised_url)
 
     # remove scheme
-    scheme = '{}:/'.format(parsed_url.scheme)
+    parsed = urlparse(normalised_url)
+    scheme = '{}:/'.format(parsed.scheme)
     full_path = normalised_url.replace(scheme, '', 1)
 
-    # process path according to enity type
+    # if relative path, remove leading punctuation
+    full_path = full_path.replace('..', '').strip('/')
+
+    # process path according to entity type
     root, ext = os.path.splitext(full_path)
-    if entity_type:
-        alphanum_name = _get_alphanum_name(full_path)
-        ending = SPECIAL_ENTITY_TYPES[entity_type]
+    if entity:
+        alphanum_name = make_alphanum(full_path)
+        ending = SPECIAL_ENTITY_TYPES[entity]
     else:
-        alphanum_name = _get_alphanum_name(root)
+        alphanum_name = make_alphanum(root)
         ending = ext
 
+    # add proper ending
     full_name = '{}{}'.format(alphanum_name, ending)
-    storage_path = os.path.join(storage_dir, full_name)
-    return storage_path
+
+    path = os.path.join(os.getcwd(), storage_dir, full_name)
+    return path
