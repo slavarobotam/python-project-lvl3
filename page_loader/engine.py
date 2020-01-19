@@ -7,8 +7,9 @@ from page_loader.processing import (download_resources,
 def engine(storage_dir, url):
     page_source = get_content(url)
     resources_dir_path = create_path(url, storage_dir, entity_type='dir')
+
     resources_data = get_resources_data(page_source, url, resources_dir_path)
-    download_resources(resources_data)
+    download_resources(resources_data, get_content, write_to_file)
 
     local_page_source = replace_paths(page_source, resources_data)
     page_path = create_path(url, storage_dir, entity_type='page')

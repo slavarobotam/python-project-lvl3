@@ -6,7 +6,8 @@ from page_loader.engine import engine
 
 
 def main():
-    storage_dir, url = parse_args(sys.argv[1:])  # argument needed for tests
+    # sys.argv added for testability
+    storage_dir, url = parse_args(sys.argv[1:])
     engine(storage_dir, url)
 
 

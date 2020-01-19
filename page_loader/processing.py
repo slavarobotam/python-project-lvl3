@@ -1,10 +1,15 @@
+# flake8: noqa: F811
 import os
 from page_loader.get_data import get_content
 
 
-def download_resources(source_data):
-    """Get urls and local_paths from source_data and download files"""
-    for source, data in source_data.items():
+def download_resources(resources_data, get_content, write_to_file):
+    """
+    Download files according the paths in resources dictionary.
+
+    Functions 'write_to_file' and 'get_content' added for testability.
+    """
+    for source, data in resources_data.items():
         content = get_content(data['url'], data['type'])
         writing_mode = 'wb' if data['type'] == 'img' else 'w'
         write_to_file(content, data['local_path'], writing_mode)
