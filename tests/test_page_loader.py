@@ -11,7 +11,7 @@ from page_loader.processing import (replace_paths, write_to_file,
 
 
 @pytest.fixture
-def temp_dir():
+def tempdir():
     with tempfile.TemporaryDirectory() as storage_dir:
         return storage_dir
 
@@ -34,9 +34,9 @@ def open_file():
 
 @pytest.mark.parametrize('argv, expected_result', [
     (['http://test.com', '-o=test_dir'], ('test_dir', 'http://test.com')),
-    (['http://test.com'],
-        ('/Users/mari/hexlet/python-project-lvl3', 'http://test.com'))])
-def test_parse_args(argv, expected_result):
+    (['http://test.com'], ('/Users/mari', 'http://test.com'))])
+def test_parse_args(argv, expected_result, monkeypatch):
+    monkeypatch.chdir('/Users/mari')
     result = parse_args(argv)
     assert expected_result == result
 
@@ -66,9 +66,9 @@ def test_get_resources_data(url, source, expected, open_file, open_json):
     ('page', 'https://example.com', 'example-com.html'),
     ('dir', 'https://xkcd.com/353/', 'xkcd-com-353_files'),
     (None, '2001/IridClouds_1500.jpg', '2001-IridClouds-1500.jpg')])
-def test_create_path(temp_dir, entity_type, url, expected_name):
-    result = create_path(url, temp_dir, entity_type)
-    expected_result = os.path.join(temp_dir, expected_name)
+def test_create_path(tempdir, entity_type, url, expected_name):
+    result = create_path(url, tempdir, entity_type)
+    expected_result = os.path.join(tempdir, expected_name)
     assert expected_result == result
 
 
@@ -97,11 +97,11 @@ def test_replace_paths(page, resources, expected, open_file, open_json):
 @pytest.mark.parametrize('_file, write_mode, name', [
     ('tests/fixtures/page_source.html', 'w+', 'o.txt'),
     ('tests/fixtures/cat_in_hat.jpg', 'wb+', 'o.jpg')])
-def test_write_to_file(_file, write_mode, name, temp_dir, open_file):
+def test_write_to_file(_file, write_mode, name, tempdir, open_file):
     read_mode = 'rb' if write_mode == 'wb+' else 'r'
     content = open_file(_file, read_mode)
 
-    path = os.path.join(temp_dir, name)
+    path = os.path.join(tempdir, name)
     write_to_file(content, path, write_mode)
 
     result = open_file(path, read_mode)
