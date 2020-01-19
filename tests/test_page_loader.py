@@ -34,9 +34,9 @@ def open_file():
 
 @pytest.mark.parametrize('argv, expected_result', [
     (['http://test.com', '-o=test_dir'], ('test_dir', 'http://test.com')),
-    (['http://test.com'], ('/Users/mari', 'http://test.com'))])
+    (['http://test.com'], ('/', 'http://test.com'))])
 def test_parse_args(argv, expected_result, monkeypatch):
-    monkeypatch.chdir('/Users/mari')
+    monkeypatch.chdir('/')
     result = parse_args(argv)
     assert expected_result == result
 
