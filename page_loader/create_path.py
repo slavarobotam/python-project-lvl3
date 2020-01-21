@@ -1,5 +1,6 @@
 import os
 from urllib.parse import urlparse
+import logging
 
 
 DELIMITER = '-'
@@ -7,6 +8,8 @@ SPECIAL_ENTITY_TYPES = {
     'dir': '_files',
     'page': '.html'
 }
+
+logger = logging.getLogger()
 
 
 def make_alphanum(name):
@@ -44,4 +47,5 @@ def create_path(url, storage_dir, entity_type=None):
 
     full_name = '{}{}'.format(alphanum_name, ending)
     path = os.path.join(os.getcwd(), storage_dir, full_name)
+    logger.debug('Path created: {}'.format(path))
     return path

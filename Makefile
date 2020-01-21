@@ -17,11 +17,17 @@ lint:
 	@poetry run flake8 --ignore=F401
 
 run:
-	@poetry run page-loader https://example.com
+	@poetry run page-loader -o=testdir -l=debug https://xkcd.com/353/
+
+run-error:
+	@poetry run page-loader -o=testdir -l=info https://щавель
 
 publish:
 	@poetry build
 	@poetry publish -r ott45
 
 cleanup:
-	@rm -rf page_loader_downloads
+	@rm -rf testdir
+
+delpyc:
+	@find . -name '*.pyc' -delete
