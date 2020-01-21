@@ -28,3 +28,12 @@ Default storage is your current working directory.
 
 [![asciicast](https://asciinema.org/a/293203.svg)](https://asciinema.org/a/293203)
 
+### Logging feature
+
+[![asciicast](https://asciinema.org/a/295009.svg)](https://asciinema.org/a/295009)
+
+
+
+
+
+
