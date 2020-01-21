@@ -15,7 +15,7 @@ REQUIRED_TAGS = {
 logger = logging.getLogger()
 
 
-def get_resources_data(page_source, url, dir_path):
+def get_resources_data(page_source, url, storage_dir):
     """Returns dictionary with info about resources."""
     soup = BeautifulSoup(page_source, 'html.parser')
     resources_data = {}
@@ -30,6 +30,7 @@ def get_resources_data(page_source, url, dir_path):
         logging.warning("No resources to download.")
         return None
 
+    dir_path = create_path(url, storage_dir, entity_type='dir')
     for resource, data in resources_data.items():
         resource_url = urljoin(url, resource)
         data['url'] = resource_url

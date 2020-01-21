@@ -2,16 +2,16 @@
     "/s/link.css": {
         "type":"link",
         "url":"https://test.url/s/link.css",
-        "local_path":"/dir/test-url-s-link.css"
+        "local_path":"/dir/test-url-123_files/test-url-s-link.css"
     },
     "/s/script.js": {
         "type":"script",
         "url":"https://test.url/s/script.js",
-        "local_path":"/dir/test-url-s-script.js"
+        "local_path":"/dir/test-url-123_files/test-url-s-script.js"
     },
     "/s/img.png": {
         "type":"img",
         "url":"https://test.url/s/img.png",
-        "local_path":"/dir/test-url-s-img.png"
+        "local_path":"/dir/test-url-123_files/test-url-s-img.png"
     }
 }

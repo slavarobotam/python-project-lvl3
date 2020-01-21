@@ -35,13 +35,12 @@ def open_file():
     return get_content
 
 
-@pytest.mark.skip(reason="Doesn't work with 2 args returned")
 def test_parse_args():
-    argv = 'http://test.com -o=test_dir -l=DEBUG'.split()
-    output, url, level = parse_args(argv)
-    assert(url == 'http://test.com')
-    assert(output == 'test_dir')
-    assert(level == 'DEBUG')
+    argv = 'http://test.com -o=test_dir -l=debug'.split()
+    args = parse_args(argv)
+    assert(args.url == 'http://test.com')
+    assert(args.output == 'test_dir')
+    assert(args.log_level == 'debug')
 
 
 @pytest.mark.parametrize('url, _type, content_length', [
@@ -115,9 +114,9 @@ def test_write_to_file(_file, write_mode, name, tempdir, open_file):
 @pytest.mark.parametrize('resourses, expected_result', [
     ('tests/fixtures/resources_data.json',
         {
-            '/dir/test-url-s-link.css',
-            '/dir/test-url-s-script.js',
-            '/dir/test-url-s-img.png'})])
+            '/dir/test-url-123_files/test-url-s-link.css',
+            '/dir/test-url-123_files/test-url-s-script.js',
+            '/dir/test-url-123_files/test-url-s-img.png'})])
 def test_download_resources(open_json, resourses, expected_result):
     resources_data = open_json(resourses)
     written_files = set()

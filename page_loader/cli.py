@@ -24,4 +24,4 @@ def parse_args(argv):  # argument added for testability
             logging.FileHandler('mylog.log', mode='w'),  # 'w' or 'a'
             logging.StreamHandler()
         ])
-    return args.output, args.url
+    return args
