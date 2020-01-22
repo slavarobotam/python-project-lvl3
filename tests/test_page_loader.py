@@ -9,6 +9,7 @@ from page_loader.get_data import get_resources_data, get_content
 from page_loader.processing import (replace_paths, write_to_file,
                                     download_resources)
 import logging
+from stat import S_IREAD, S_IRGRP, S_IROTH
 
 logger = logging.getLogger()
 
@@ -35,14 +36,37 @@ def open_file():
     return get_content
 
 
+def test_error_sysexit():
+    with tempfile.TemporaryDirectory() as tempdir:
+        os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
+        with pytest.raises(SystemExit) as exc_info:
+            storage_path = os.path.join(tempdir, 'testfile')
+            content = 'some_content'
+            write_to_file(content, storage_path, writing_mode='w')
+        assert exc_info.value.code == 1
+
+
+# @pytest.mark.skip(reason='A bit excessive to test_error_permission')
+# def test_error_oserror():
+#     with tempfile.TemporaryDirectory() as tempdir:
+#         os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
+#         with pytest.raises(OSError) as exc_info:
+#             basename = os.path.basename(os.path.normpath(tempdir))
+#             storage_path = os.path.join(tempdir, basename)
+#             content = 'some_content'
+#             write_to_file(content, storage_path, writing_mode='w')
+#         assert 'Permission denied' in str(exc_info.value)
+
+
 def test_parse_args():
     argv = 'http://test.com -o=test_dir -l=debug'.split()
     args = parse_args(argv)
     assert(args.url == 'http://test.com')
-    assert(args.output == 'test_dir')
+    assert(args.level == 'test_dir')
     assert(args.log_level == 'debug')
 
 
+@pytest.mark.skip()
 @pytest.mark.parametrize('url, _type, content_length', [
     ('http://httpbin.org/html', 'text', 3739),
     ('http://www.bridgeclub.ru/im/old.jpg', 'img', 117883)])

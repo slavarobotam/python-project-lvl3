@@ -9,13 +9,13 @@ logger = logging.getLogger()
 
 def engine(args):
     url, storage_dir = args.url, args.output
+
     page_source = get_content(url)
     page_localpath = create_path(url, storage_dir, entity_type='page')
 
     resources_data = get_resources_data(page_source, url, storage_dir)
-    local_page_source = replace_paths(page_source, resources_data)
-    write_to_file(local_page_source, page_localpath)
-
     download_resources(resources_data, get_content, write_to_file)
+    local_page_source = replace_paths(page_source, resources_data)
 
-    logger.info('Page available locally on {}'.format(page_localpath))
+    write_to_file(local_page_source, page_localpath)
+    logger.info('Page available locally at {}'.format(page_localpath))

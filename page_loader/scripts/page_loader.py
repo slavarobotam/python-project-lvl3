@@ -7,8 +7,8 @@ from page_loader.engine import engine
 
 def main():
     # sys.argv added for testability
-    storage_dir, url = parse_args(sys.argv[1:])
-    engine(storage_dir, url)
+    args = parse_args(sys.argv[1:])
+    engine(args)
 
 
 if __name__ == '__main__':
