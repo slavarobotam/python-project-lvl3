@@ -22,11 +22,6 @@ def parse_args(argv):  # argument added for testability
     stdout_level = level_config[args.level.lower()]
 
     logger = logging.getLogger()
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='[%(filename)-20.20s] [%(levelname)-5.5s] %(message)s',
-        filename='debug_log.log',
-        filemode='w')
 
     format_for_stdout = logging.Formatter('%(message)s')
     format_for_logfile = logging.Formatter(
@@ -45,4 +40,6 @@ def parse_args(argv):  # argument added for testability
 
     logging.addLevelName(logging.INFO, logging.getLevelName(logging.INFO))
     logging.addLevelName(logging.ERROR, logging.getLevelName(logging.ERROR))
+
+    logging.getLogger().setLevel(logging.DEBUG)
     return args

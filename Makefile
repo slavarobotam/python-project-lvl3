@@ -17,7 +17,7 @@ lint:
 	@poetry run flake8 --ignore=F401
 
 run:
-	@poetry run page-loader -o=testdir -l=info https://example.com/
+	@poetry run page-loader -o=testdir -l=info https://xkcd.com/353/
 
 run-error:
 	@poetry run page-loader -o=testdir -l=info https://щавель
