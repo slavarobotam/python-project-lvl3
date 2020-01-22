@@ -62,8 +62,8 @@ def test_parse_args():
     argv = 'http://test.com -o=test_dir -l=debug'.split()
     args = parse_args(argv)
     assert(args.url == 'http://test.com')
-    assert(args.level == 'test_dir')
-    assert(args.log_level == 'debug')
+    assert(args.output == 'test_dir')
+    assert(args.level == 'debug')
 
 
 @pytest.mark.skip()

@@ -19,7 +19,7 @@ def parse_args(argv):  # argument added for testability
                         choices=LEVELS,
                         help='Specify level of output verbosity')
     args = parser.parse_args(argv)
-    stdout_level = level_config[parser.parse_args().level.lower()]
+    stdout_level = level_config[args.level.lower()]
 
     logger = logging.getLogger()
     logging.basicConfig(
