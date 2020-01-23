@@ -7,6 +7,10 @@ pip-install:
 	@pip install --user --index-url https://test.pypi.org/simple/ \
 		--extra-index-url https://pypi.org/simple/ slavarobotam_page_loader
 
+pip-upgrade:
+	@pip install --upgrade --user --index-url https://test.pypi.org/simple/ \
+		slavarobotam_page_loader
+
 uninstall:
 	@pip uninstall slavarobotam_page_loader
 

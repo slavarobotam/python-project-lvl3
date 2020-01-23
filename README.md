@@ -13,22 +13,23 @@ $ pip install --user --index-url https://test.pypi.org/simple/ \
 
 ### How to use
 
-If you want to download a page, just run:
+If you want to **download a page**, just run:
 ``` bash
 $ page-loader https://example.com/
 ```
-
-You can specify the storage directory with `-o` parameter (same for `--output`):
+---
+You can specify the **storage directory** with `-o`(or `--output`) parameter.
 ```sh
 $ page-loader -o=mydownloads https://example.com/
 ```
 Default storage is your current working directory.
 
-Level of verbosity chosen with `-l` parameter (same for `-level`):
+---
+**Level of logging** is chosen with `-l`(or `--level`) parameter:
 ```sh
 $ page-loader -l=debug https://example.com/
 ```
-Levels are `info` (for basic information about the process) and `debug` for maximum details.
+Levels are `info` (for basic information about the process) or `debug` for maximum details.
 
 ### Installation and base functionality
 
@@ -42,3 +43,6 @@ Levels are `info` (for basic information about the process) and `debug` for maxi
 
 [![asciicast](https://asciinema.org/a/295544.svg)](https://asciinema.org/a/295544)
 
+### Progress bar
+
+[![asciicast](https://asciinema.org/a/295571.svg)](https://asciinema.org/a/295571)
