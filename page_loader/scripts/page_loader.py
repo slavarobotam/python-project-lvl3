@@ -6,8 +6,7 @@ from page_loader.engine import engine
 
 
 def main():
-    # sys.argv added for testability
-    args = parse_args(sys.argv[1:])
+    args = parse_args(sys.argv[1:])  # sys.argv added for testability
     engine(args)
 
 

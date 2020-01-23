@@ -21,9 +21,9 @@ def make_alphanum(name):
 
 
 def create_path(url, storage_dir, entity_type=None):
-    """Create name from url for the required entity type.
+    """Create name from url for the required entity type: page, dir or None.
 
-    If entity type is in SPECIAL_ENTITY_TYPES, add appropriate ending.
+    If entity type is not None, add appropriate ending.
     Otherwise filename retains the original extension if there is one.
     """
     normalised_url = os.path.normpath(url)

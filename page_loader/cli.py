@@ -15,6 +15,6 @@ def parse_args(argv):  # argument added for testability
     parser.add_argument('-l', '--level',
                         default='INFO',
                         choices=LEVELS,
-                        help='Specify level of output: ["debug", "info"]')
+                        help='Level of logging: ["debug", "info"]')
     args = parser.parse_args(argv)
     return args
