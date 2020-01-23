@@ -32,8 +32,7 @@ Default storage is your current working directory.
 
 [![asciicast](https://asciinema.org/a/295009.svg)](https://asciinema.org/a/295009)
 
+### Error handling
 
-
-
-
+[![asciicast](https://asciinema.org/a/295544.svg)](https://asciinema.org/a/295544)
 
