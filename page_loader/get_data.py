@@ -1,10 +1,9 @@
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import requests
-from page_loader.create_path import create_path
 import logging
 import sys
-
+from page_loader.create_path import create_path
 
 # sources to download: {tag_name: tag_attribute}
 REQUIRED_TAGS = {
@@ -16,7 +15,7 @@ REQUIRED_TAGS = {
 logger = logging.getLogger()
 
 
-def get_resources_data(page_source, url, storage_dir):
+def get_resources_data(page_source, url, dir_path):
     """Returns dictionary with info about resources."""
     soup = BeautifulSoup(page_source, 'html.parser')
     resources_data = {}
@@ -31,7 +30,6 @@ def get_resources_data(page_source, url, storage_dir):
         logging.warning("No resources to download.")
         return None
 
-    dir_path = create_path(url, storage_dir, entity_type='dir')
     for resource, data in resources_data.items():
         resource_url = urljoin(url, resource)
         data['url'] = resource_url
@@ -45,9 +43,15 @@ def get_content(url, _type='text'):
     try:
         r = requests.get(url)
         r.raise_for_status()
-    except requests.exceptions.RequestException:
+    except (
+            requests.ConnectionError,
+            requests.RequestException,
+            requests.HTTPError,
+            requests.Timeout,
+            requests.TooManyRedirects) as err:
         logger.error(
-            'Error for url {}. Please choose another one.'.format(url),
+            'Error for url {}. Message: {}.\
+            Please choose another one.'.format(url, str(err)),
             exc_info=False)  # set True to see traceback
         sys.exit(1)
     else:

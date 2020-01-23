@@ -19,6 +19,9 @@ lint:
 run:
 	@poetry run page-loader -o=testdir -l=info https://xkcd.com/353/
 
+run-ex:
+	@poetry run page-loader -o=testdir -l=debug https://example.com/
+
 run-error:
 	@poetry run page-loader -o=testdir -l=info https://щавель
 

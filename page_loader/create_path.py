@@ -49,3 +49,11 @@ def create_path(url, storage_dir, entity_type=None):
     path = os.path.join(os.getcwd(), storage_dir, full_name)
     logger.debug('Path created: {}'.format(path))
     return path
+
+
+def ensure_dir(storage_dir):
+    cwd = os.getcwd()
+    dir_path = os.path.join(cwd, storage_dir)
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+    logger.debug('Directory created: {}'.format(dir_path))

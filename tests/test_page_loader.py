@@ -6,7 +6,7 @@ import copy
 from page_loader.cli import parse_args
 from page_loader.create_path import create_path, make_alphanum
 from page_loader.get_data import get_resources_data, get_content
-from page_loader.processing import (replace_paths, write_to_file,
+from page_loader.processing import (replace_paths, save,
                                     download_resources)
 import logging
 from stat import S_IREAD, S_IRGRP, S_IROTH
@@ -17,7 +17,7 @@ logger = logging.getLogger()
 @pytest.fixture
 def tempdir():
     with tempfile.TemporaryDirectory() as storage_dir:
-        return storage_dir
+        yield storage_dir
 
 
 @pytest.fixture
@@ -36,26 +36,20 @@ def open_file():
     return get_content
 
 
-def test_error_sysexit():
-    with tempfile.TemporaryDirectory() as tempdir:
-        os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
-        with pytest.raises(SystemExit) as exc_info:
-            storage_path = os.path.join(tempdir, 'testfile')
-            content = 'some_content'
-            write_to_file(content, storage_path, writing_mode='w')
-        assert exc_info.value.code == 1
+def test_error_save(tempdir):
+    os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
+    with pytest.raises(SystemExit) as exc_info:
+        storage_path = os.path.join(tempdir, 'testfile')
+        content = 'some_content'
+        save(content, storage_path, writing_mode='w')
+    assert exc_info.value.code == 1
 
 
-# @pytest.mark.skip(reason='A bit excessive to test_error_permission')
-# def test_error_oserror():
-#     with tempfile.TemporaryDirectory() as tempdir:
-#         os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
-#         with pytest.raises(OSError) as exc_info:
-#             basename = os.path.basename(os.path.normpath(tempdir))
-#             storage_path = os.path.join(tempdir, basename)
-#             content = 'some_content'
-#             write_to_file(content, storage_path, writing_mode='w')
-#         assert 'Permission denied' in str(exc_info.value)
+def test_error_http_request():
+    url = 'https://wrong_url'
+    with pytest.raises(SystemExit) as exc_info:
+        get_content(url)
+    assert exc_info.value.code == 1
 
 
 def test_parse_args():
@@ -66,7 +60,6 @@ def test_parse_args():
     assert(args.level == 'debug')
 
 
-@pytest.mark.skip()
 @pytest.mark.parametrize('url, _type, content_length', [
     ('http://httpbin.org/html', 'text', 3739),
     ('http://www.bridgeclub.ru/im/old.jpg', 'img', 117883)])
@@ -81,7 +74,7 @@ def test_get_content(url, _type, content_length):
         'tests/fixtures/page_source.html',
         'tests/fixtures/resources_data.json')])
 def test_get_resources_data(url, source, expected, open_file, open_json):
-    dir_path = '/dir/'
+    dir_path = '/testdir/test-url-123_files/'
     page_source = open_file(source)
     result = get_resources_data(page_source, url, dir_path)
     expected_result = open_json(expected)
@@ -123,33 +116,35 @@ def test_replace_paths(page, resources, expected, open_file, open_json):
 @pytest.mark.parametrize('_file, write_mode, name', [
     ('tests/fixtures/page_source.html', 'w+', 'o.txt'),
     ('tests/fixtures/cat_in_hat.jpg', 'wb+', 'o.jpg')])
-def test_write_to_file(_file, write_mode, name, tempdir, open_file):
+def test_save(_file, write_mode, name, tempdir, open_file):
     read_mode = 'rb' if write_mode == 'wb+' else 'r'
     content = open_file(_file, read_mode)
 
     path = os.path.join(tempdir, name)
-    write_to_file(content, path, write_mode)
+    save(content, path, write_mode)
 
     result = open_file(path, read_mode)
     expected_result = content
     assert expected_result == result
 
 
-@pytest.mark.parametrize('resourses, expected_result', [
+@pytest.mark.parametrize('json, expected', [
     ('tests/fixtures/resources_data.json',
         {
-            '/dir/test-url-123_files/test-url-s-link.css',
-            '/dir/test-url-123_files/test-url-s-script.js',
-            '/dir/test-url-123_files/test-url-s-img.png'})])
-def test_download_resources(open_json, resourses, expected_result):
-    resources_data = open_json(resourses)
+            '/testdir/test-url-123_files/test-url-s-link.css',
+            '/testdir/test-url-123_files/test-url-s-script.js',
+            '/testdir/test-url-123_files/test-url-s-img.png'})])
+def test_download_resources(open_json, json, expected):
+    resources_data = open_json(json)
     written_files = set()
+    dire_path = '/testdir/test-url-123_files/'
 
     def mock_getcontent(url, _type):
         return url
 
-    def mock_write(content, local_path, writing_mode):
+    def mock_save(content, local_path, writing_mode):
         written_files.add(local_path)
-    download_resources(resources_data, mock_getcontent, mock_write)
+    download_resources(resources_data, dire_path,
+                       mock_getcontent, mock_save, need_dir=False)
     result = {v['local_path'] for v in resources_data.values()}
-    assert expected_result == result
+    assert expected == result
