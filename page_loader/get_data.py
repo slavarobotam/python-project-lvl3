@@ -48,11 +48,10 @@ def get_content(url, _type='text'):
             requests.RequestException,
             requests.HTTPError,
             requests.Timeout,
-            requests.TooManyRedirects) as err:
+            requests.TooManyRedirects) as error:
         logger.error(
-            'Error for url {}. Message: {}.\
-            Please choose another one.'.format(url, str(err)),
-            exc_info=False)  # set True to see traceback
+            'Error for url {}. Please choose another one. '
+            'Reason: {}'.format(url, str(error)))
         sys.exit(1)
     else:
         url_content = r.content if _type == 'img' else r.text

@@ -1,8 +1,6 @@
 import argparse
 import os
-import logging
 
-level_config = {'debug': logging.DEBUG, 'info': logging.INFO}
 LEVELS = ['debug', 'info']
 
 
@@ -17,29 +15,6 @@ def parse_args(argv):  # argument added for testability
     parser.add_argument('-l', '--level',
                         default='INFO',
                         choices=LEVELS,
-                        help='Specify level of output verbosity')
+                        help='Specify level of output: ["debug", "info"]')
     args = parser.parse_args(argv)
-    stdout_level = level_config[args.level.lower()]
-
-    logger = logging.getLogger()
-
-    format_for_stdout = logging.Formatter('%(message)s')
-    format_for_logfile = logging.Formatter(
-        '[%(filename)-18.18s] [%(levelname)-5.5s] %(message)s')
-
-    handler_logfile = logging.FileHandler('debug_log.log', mode='w')
-    handler_logfile.setLevel(logging.DEBUG)
-    handler_logfile.setFormatter(format_for_logfile)
-
-    handler_stdout = logging.StreamHandler()
-    handler_stdout.setLevel(stdout_level)
-    handler_stdout.setFormatter(format_for_stdout)
-
-    logger.addHandler(handler_logfile)
-    logger.addHandler(handler_stdout)
-
-    logging.addLevelName(logging.INFO, logging.getLevelName(logging.INFO))
-    logging.addLevelName(logging.ERROR, logging.getLevelName(logging.ERROR))
-
-    logging.getLogger().setLevel(logging.DEBUG)
     return args

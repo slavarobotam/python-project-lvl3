@@ -36,22 +36,6 @@ def open_file():
     return get_content
 
 
-def test_error_save(tempdir):
-    os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
-    with pytest.raises(SystemExit) as exc_info:
-        storage_path = os.path.join(tempdir, 'testfile')
-        content = 'some_content'
-        save(content, storage_path, writing_mode='w')
-    assert exc_info.value.code == 1
-
-
-def test_error_http_request():
-    url = 'https://wrong_url'
-    with pytest.raises(SystemExit) as exc_info:
-        get_content(url)
-    assert exc_info.value.code == 1
-
-
 def test_parse_args():
     argv = 'http://test.com -o=test_dir -l=debug'.split()
     args = parse_args(argv)
@@ -148,3 +132,27 @@ def test_download_resources(open_json, json, expected):
                        mock_getcontent, mock_save, need_dir=False)
     result = {v['local_path'] for v in resources_data.values()}
     assert expected == result
+
+
+def test_error_permission_denied(tempdir):
+    os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
+    with pytest.raises(SystemExit) as exc_info:
+        storage_path = os.path.join(tempdir, 'testfile')
+        content = 'some_content'
+        save(content, storage_path, writing_mode='w')
+    assert exc_info.value.code == 1
+
+
+def test_error_wrong_url():
+    url = 'https://wrong_url'
+    with pytest.raises(SystemExit) as exc_info:
+        get_content(url)
+    assert exc_info.value.code == 1
+
+
+def test_error_no_directory():
+    content = 'some content'
+    storage_path = '/nonexistent-directory/file'
+    with pytest.raises(SystemExit) as exc_info:
+        save(content, storage_path, writing_mode='w')
+    assert exc_info.value.code == 1
