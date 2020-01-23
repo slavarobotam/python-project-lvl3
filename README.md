@@ -24,6 +24,12 @@ $ page-loader -o=mydownloads https://example.com/
 ```
 Default storage is your current working directory.
 
+Level of verbosity chosen with `-l` parameter (same for `-level`):
+```sh
+$ page-loader -l=debug https://example.com/
+```
+Levels are `info` (for basic information about the process) and `debug` for maximum details.
+
 ### Installation and base functionality
 
 [![asciicast](https://asciinema.org/a/293203.svg)](https://asciinema.org/a/293203)
