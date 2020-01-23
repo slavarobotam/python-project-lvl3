@@ -4,7 +4,7 @@ import os
 LEVEL_CONFIG = {
     'debug': logging.DEBUG,
     'info': logging.INFO
-    }
+}
 
 
 def run_logging(storage_dir, level):
