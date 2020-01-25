@@ -54,8 +54,8 @@ def get_response(url, _type='text'):
             logger.error('Error for url {}. Reason: {}'.format(url, str(err)))
             raise
         else:
-            logger.debug('Skipping resource {}. '
-                         'Reason: {}'.format(url, str(err)))
+            logger.warning('Skipping resource {}. '
+                           'Reason: {}'.format(url, str(err)))
     else:
         logger.debug('Successfully received response from {}'.format(url))
         return response

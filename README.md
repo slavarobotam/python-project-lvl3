@@ -54,4 +54,4 @@ If only directory specified, there will be created file `debug.log`.
 
 ### Progress bar
 
-[![asciicast](https://asciinema.org/a/295571.svg)](https://asciinema.org/a/295571)
+[![asciicast](https://asciinema.org/a/295924.svg)](https://asciinema.org/a/295924)
