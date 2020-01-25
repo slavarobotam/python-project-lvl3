@@ -18,18 +18,27 @@ If you want to **download a page**, just run:
 $ page-loader https://example.com/
 ```
 ---
-You can specify the **storage directory** with `-o`(or `--output`) parameter.
+You can specify a **storage directory** with option `-o`(or `--output`):
 ```sh
 $ page-loader -o=mydownloads https://example.com/
 ```
 Default storage is your current working directory.
 
 ---
-**Level of logging** is chosen with `-l`(or `--level`) parameter:
+**Level of logging** is chosen with option `-l`(or `--level`):
 ```sh
 $ page-loader -l=debug https://example.com/
 ```
 Levels are `info` (for basic information about the process) or `debug` for maximum details.
+
+---
+**Log file** is created by indicating the path with command `-f` (or `--filepath`):
+```sh
+$ page-loader -f=TEMP/mylog.log https://example.com/
+```
+If only directory specified, there will be created file `debug.log`.
+
+---
 
 ### Installation and base functionality
 

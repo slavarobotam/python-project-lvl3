@@ -5,13 +5,10 @@ import json
 import copy
 from page_loader.cli import parse_args
 from page_loader.create_path import create_path, make_alphanum
-from page_loader.get_data import get_resources_data, get_content
-from page_loader.processing import (replace_paths, save,
-                                    download_resources)
-import logging
+from page_loader.get_data import get_resources_data, get_response
+from page_loader.processing import (replace_paths, save, download_resources)
 from stat import S_IREAD, S_IRGRP, S_IROTH
-
-logger = logging.getLogger()
+import requests
 
 
 @pytest.fixture
@@ -22,18 +19,18 @@ def tempdir():
 
 @pytest.fixture
 def open_json():
-    def get_content(path):
+    def open_path(path):
         with open(path) as filename:
             return json.load(filename)
-    return get_content
+    return open_path
 
 
 @pytest.fixture
 def open_file():
-    def get_content(path, mode='r'):
+    def open_path(path, mode='r'):
         with open(path, mode) as filename:
             return filename.read()
-    return get_content
+    return open_path
 
 
 def test_parse_args():
@@ -42,15 +39,6 @@ def test_parse_args():
     assert(args.url == 'http://test.com')
     assert(args.output == 'test_dir')
     assert(args.level == 'debug')
-
-
-@pytest.mark.parametrize('url, _type, content_length', [
-    ('http://httpbin.org/html', 'text', 3739),
-    ('http://www.bridgeclub.ru/im/old.jpg', 'img', 117883)])
-def test_get_content(url, _type, content_length):
-    expected_result = content_length
-    result = len(get_content(url, _type))
-    assert expected_result == result
 
 
 @pytest.mark.parametrize('url, source, expected', [
@@ -123,12 +111,15 @@ def test_download_resources(open_json, json, expected):
     written_files = set()
     dire_path = '/testdir/test-url-123_files/'
 
-    def mock_getcontent(url, _type):
+    def mock_getresponse(url, _type):
         return url
+
+    def mock_getcontent(response, _type):
+        return response
 
     def mock_save(content, local_path, writing_mode):
         written_files.add(local_path)
-    download_resources(resources_data, dire_path,
+    download_resources(resources_data, dire_path, mock_getresponse,
                        mock_getcontent, mock_save, need_dir=False)
     result = {v['local_path'] for v in resources_data.values()}
     assert expected == result
@@ -136,23 +127,23 @@ def test_download_resources(open_json, json, expected):
 
 def test_error_permission_denied(tempdir):
     os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
-    with pytest.raises(SystemExit) as exc_info:
+    with pytest.raises(PermissionError) as exc_info:
         storage_path = os.path.join(tempdir, 'testfile')
         content = 'some_content'
-        save(content, storage_path, writing_mode='w')
-    assert exc_info.value.code == 1
+        save(content, storage_path, 'w')
+    assert 'PermissionError' in exc_info.exconly()
 
 
 def test_error_wrong_url():
     url = 'https://wrong_url'
-    with pytest.raises(SystemExit) as exc_info:
-        get_content(url)
-    assert exc_info.value.code == 1
+    with pytest.raises(requests.exceptions.RequestException) as exc_info:
+        get_response(url)
+    assert 'requests.exceptions' in exc_info.exconly()
 
 
 def test_error_no_directory():
     content = 'some content'
     storage_path = '/nonexistent-directory/file'
-    with pytest.raises(SystemExit) as exc_info:
-        save(content, storage_path, writing_mode='w')
-    assert exc_info.value.code == 1
+    with pytest.raises(FileNotFoundError) as exc_info:
+        save(content, storage_path, 'w')
+    assert 'FileNotFoundError' in exc_info.exconly()

@@ -1,42 +1,35 @@
 from page_loader.create_path import ensure_dir
 import logging
-import sys
 from progress.bar import IncrementalBar
 
 logger = logging.getLogger()
+BAR_WIDTH = 30
 
 
-def download_resources(resources_data, dir_path,
+def download_resources(resources, dir_path, get_response,
                         get_content, save, need_dir=True):  # noqa: F811
-
     """
     Download files to dir_path according the paths in resources dictionary.
 
     Creates directory if need_dir is True.
-    Functions 'get_content' and 'save' added for testability.
+    Functions 'get_response', 'get_content' and 'save' added for testability.
     """
-    if need_dir and resources_data:
-        ensure_dir(dir_path)
-    try:
-        total_items = len(resources_data)
-        bar_width = 30
-        bar = IncrementalBar('Downloading:', max=bar_width)
-        bar.suffix = '%(percent).1f%% (eta: %(eta)s)'
+    if resources is None:
+        logger.debug('Downloading skipped.')
+        return None
 
-        filled_bar = 0
-        processed_percentage = 0
-        for source, data in resources_data.items():
-            content = get_content(data['url'], data['type'])
+    if need_dir:
+        ensure_dir(dir_path)
+
+    bar = IncrementalBar('Downloading:', max=BAR_WIDTH)
+    bar.suffix = '%(percent).1f%% (Time to completion: %(eta)s seconds)'
+    for i in bar.iter(resources.items()):
+        for source, data in resources.items():
+            response = get_response(data['url'], data['type'])
+            content = get_content(response, data['type'])
             writing_mode = 'wb' if data['type'] == 'img' else 'w'
             save(content, data['local_path'], writing_mode)
-            processed_percentage += (1 / total_items)
-            if processed_percentage >= filled_bar / bar_width:
-                bar.next()
-                filled_bar += 1
-        bar.finish()
-        logger.info('All resources downloaded successfully.')
-    except AttributeError:
-        logger.debug('Downloading skipped.')
+    logger.info('Resources downloaded successfully.')
 
 
 def replace_paths(page_source, resources_data):
@@ -56,7 +49,19 @@ def save(content, storage_path, writing_mode='w'):
         with open(storage_path, writing_mode) as f:
             f.write(content)
             logger.debug('Content saved to {}'.format(storage_path))
-    except OSError as err:
+    except FileNotFoundError as err:
         logging.error(
             'Error saving to {}. Error message: {}'.format(storage_path, err))
-        sys.exit(1)
+        raise FileNotFoundError("FileNotFoundError occured, can't save file.")
+    except PermissionError as err:
+        logging.error(
+            'Error saving to {}. Error message: {}'.format(storage_path, err))
+        raise PermissionError("PermissionError occured, can't save file.")
+    except TypeError as err:
+        logging.debug('TypeError while save attempt: {}'.format(err))
+
+
+def check_scheme(url):
+    if not url.startswith('http'):
+        url = '{}{}'.format('http://', url)
+    return url

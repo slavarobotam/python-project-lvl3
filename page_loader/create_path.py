@@ -36,7 +36,7 @@ def create_path(url, storage_dir, entity_type=None):
     # if relative path used, remove leading punctuation
     full_path = full_path.replace('..', '').strip('/')
 
-    # process path according to entity type
+    # path processing according to entity type
     root, ext = os.path.splitext(full_path)
     if entity_type is not None:
         alphanum_name = make_alphanum(full_path)
@@ -52,8 +52,12 @@ def create_path(url, storage_dir, entity_type=None):
 
 
 def ensure_dir(storage_dir):
-    cwd = os.getcwd()
-    dir_path = os.path.join(cwd, storage_dir)
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
-    logger.debug('Directory created: {}'.format(dir_path))
+    try:
+        dir_path = os.path.join(os.getcwd(), storage_dir)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        logger.debug('Directory created: {}'.format(dir_path))
+    except PermissionError:
+        parent_dir = os.path.dirname(dir_path)
+        logging.error('Permission denied for {}'.format(parent_dir))
+        raise

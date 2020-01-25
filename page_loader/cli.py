@@ -16,5 +16,11 @@ def parse_args(argv):  # argument added for testability
                         default='INFO',
                         choices=LEVELS,
                         help='Level of logging: ["debug", "info"]')
+    parser.add_argument('-f', '--filepath',
+                        action='store',
+                        nargs='?',
+                        type=str,
+                        help='Path to log file, for example temp/mylog.log')
+
     args = parser.parse_args(argv)
     return args

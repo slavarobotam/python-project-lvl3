@@ -15,7 +15,8 @@ uninstall:
 	@pip uninstall slavarobotam_page_loader
 
 test:
-	@poetry run pytest -vv --cov=page_loader tests/ --cov-report xml
+	@poetry run pytest --log-format="%(asctime)s %(levelname)s %(message)s" \
+        --log-date-format="%Y-%m-%d %H:%M:%S" -vv --cov=page_loader tests/ --cov-report xml
 
 lint:
 	@poetry run flake8 --ignore=F401
