@@ -5,8 +5,10 @@ import json
 import copy
 from page_loader.cli import parse_args
 from page_loader.create_path import create_path, make_alphanum
-from page_loader.get_data import get_resources_data, get_response
-from page_loader.processing import (replace_paths, save, download_resources)
+from page_loader.get_data import check_scheme, get_response, get_content
+from page_loader.process_data import (
+    get_resources_data, make_paths, download_resources, replace_paths)
+from page_loader.save_data import write_to_file
 from stat import S_IREAD, S_IRGRP, S_IROTH
 import requests
 
@@ -41,6 +43,14 @@ def test_parse_args():
     assert(args.level == 'debug')
 
 
+@pytest.mark.parametrize('url, expected_result', [
+    ('https://ya.ru', 'https://ya.ru'),
+    ('ya.ru', 'http://ya.ru')])
+def test_check_scheme(url, expected_result):
+    result = check_scheme(url)
+    assert expected_result == result
+
+
 @pytest.mark.parametrize('url, source, expected', [
     ('https://test.url/123',
         'tests/fixtures/page_source.html',
@@ -48,7 +58,8 @@ def test_parse_args():
 def test_get_resources_data(url, source, expected, open_file, open_json):
     dir_path = '/testdir/test-url-123_files/'
     page_source = open_file(source)
-    result = get_resources_data(page_source, url, dir_path)
+    resources_data = get_resources_data(page_source, url)
+    result = make_paths(resources_data, url, dir_path)
     expected_result = open_json(expected)
     assert expected_result == result
 
@@ -93,7 +104,7 @@ def test_save(_file, write_mode, name, tempdir, open_file):
     content = open_file(_file, read_mode)
 
     path = os.path.join(tempdir, name)
-    save(content, path, write_mode)
+    write_to_file(content, path, write_mode)
 
     result = open_file(path, read_mode)
     expected_result = content
@@ -130,7 +141,7 @@ def test_error_permission_denied(tempdir):
     with pytest.raises(PermissionError) as exc_info:
         storage_path = os.path.join(tempdir, 'testfile')
         content = 'some_content'
-        save(content, storage_path, 'w')
+        write_to_file(content, storage_path, 'w')
     assert 'PermissionError' in exc_info.exconly()
 
 
@@ -145,5 +156,5 @@ def test_error_no_directory():
     content = 'some content'
     storage_path = '/nonexistent-directory/file'
     with pytest.raises(FileNotFoundError) as exc_info:
-        save(content, storage_path, 'w')
+        write_to_file(content, storage_path, 'w')
     assert 'FileNotFoundError' in exc_info.exconly()

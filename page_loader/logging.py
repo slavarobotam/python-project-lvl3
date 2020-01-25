@@ -1,6 +1,6 @@
 import logging
 import os
-from page_loader.create_path import ensure_dir
+from page_loader.save_data import ensure_dir
 
 LEVEL_CONFIG = {
     'debug': logging.DEBUG,
@@ -13,8 +13,9 @@ def run_logging(args):
     Function enabling logging for both console output and log file.
 
     The level of console output verbosity is of user's choice.
-    Logs for last call are always saved with debug level at debug_log.log
-    in storage_dir specified by user.
+
+    If filepath specified, creates logfile. If only directory specified,
+    there will be created file debug.log. Log level always 'debug'.
     """
     logger = logging.getLogger()
 
