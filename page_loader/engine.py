@@ -7,7 +7,7 @@ logger = logging.getLogger()
 
 
 def run_engine(args):
-    url, storage = args.url, args.output
+    storage = args.output
     source, url = get_data(args.url, get_response, get_content)
     local_source = process_data(source, url, storage, download, create_path)
     save_data(url, storage, local_source)
