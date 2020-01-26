@@ -1,0 +1,11 @@
+{ 
+    "/s/link.css": {
+        "type":"link"
+    },
+    "/s/script.js": {
+        "type":"script"
+    },
+    "/s/img.png": {
+        "type":"img"
+    }
+}

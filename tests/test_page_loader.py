@@ -1,14 +1,16 @@
 import pytest  # noqa: F401
+from page_loader.cli import parse_args, run_cli
+from page_loader.create_path import create_path, make_alphanum
+from page_loader.get_data import _check_scheme, get_data, get_response
+from page_loader.process_data import (get_resources_data, make_paths,
+                                      download, replace_paths, process_data)
+from page_loader.save_data import write_to_file
+from page_loader.logging import run_logging
 import tempfile
 import os
 import json
 import copy
-from page_loader.cli import parse_args
-from page_loader.create_path import create_path, make_alphanum
-from page_loader.get_data import check_scheme, get_response, get_content
-from page_loader.process_data import (
-    get_resources_data, make_paths, download_resources, replace_paths)
-from page_loader.save_data import write_to_file
+
 from stat import S_IREAD, S_IRGRP, S_IROTH
 import requests
 
@@ -43,11 +45,36 @@ def test_parse_args():
     assert(args.level == 'debug')
 
 
+def test_run_cli(tempdir):
+    url = 'http://test.com'
+    storage = '-o={}'.format(tempdir)
+    level = '-l=debug'
+    args = run_cli([url, storage, level])
+    assert(args.url == 'http://test.com')
+    assert(args.output == tempdir)
+    assert(args.level == 'debug')
+
+
 @pytest.mark.parametrize('url, expected_result', [
     ('https://ya.ru', 'https://ya.ru'),
     ('ya.ru', 'http://ya.ru')])
 def test_check_scheme(url, expected_result):
-    result = check_scheme(url)
+    result = _check_scheme(url)
+    assert expected_result == result
+
+
+def test_get_data():
+    url = 'example.com'
+
+    def mock_getresponse(url):
+        response = 'response'
+        return response
+
+    def mock_getcontent(response):
+        source = 'page_source'
+        return source
+    result = get_data(url, mock_getresponse, mock_getcontent)
+    expected_result = ('page_source', 'http://example.com')
     assert expected_result == result
 
 
@@ -61,6 +88,15 @@ def test_get_resources_data(url, source, expected, open_file, open_json):
     resources_data = get_resources_data(page_source, url)
     result = make_paths(resources_data, url, dir_path)
     expected_result = open_json(expected)
+    assert expected_result == result
+
+
+def test_make_paths(open_json):
+    resources_data = open_json('tests/fixtures/resources_no_paths.json')
+    url = 'https://test.url'
+    dir_path = '/testdir/test-url-123_files'
+    result = make_paths(resources_data, url, dir_path)
+    expected_result = open_json('tests/fixtures/resources_data.json')
     assert expected_result == result
 
 
@@ -93,6 +129,23 @@ def test_replace_paths(page, resources, expected, open_file, open_json):
     resources_data_copy = copy.deepcopy(resources_data)
     result = replace_paths(page_source, resources_data_copy)
     expected_result = open_file(expected)
+    assert expected_result == result
+
+
+def test_process_data(open_file):
+    page_source = open_file('tests/fixtures/page_source.html')
+    url = 'https://test.url/123'
+    storage_dir = 'testdir'
+
+    def mock_download(*args):
+        return 'Downloaded'
+
+    def mock_createpath(*args, **kwargs):
+        return '/testdir/test-url-123_files/'
+
+    result = process_data(page_source, url, storage_dir, mock_download,
+                          mock_createpath)
+    expected_result = open_file('tests/fixtures/local_source.html')
     assert expected_result == result
 
 
@@ -130,21 +183,22 @@ def test_download_resources(open_json, json, expected):
 
     def mock_save(content, local_path, writing_mode):
         written_files.add(local_path)
-    download_resources(resources_data, dire_path, mock_getresponse,
-                       mock_getcontent, mock_save, need_dir=False)
+    download(resources_data, dire_path, mock_getresponse, mock_getcontent,
+             mock_save, need_dir=False)
     result = {v['local_path'] for v in resources_data.values()}
     assert expected == result
 
 
-def test_error_permission_denied(tempdir):
+def test_run_logging(tempdir):
     os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
     with pytest.raises(PermissionError) as exc_info:
-        storage_path = os.path.join(tempdir, 'testfile')
-        content = 'some_content'
-        write_to_file(content, storage_path, 'w')
+        level = 'info'
+        filepath = os.path.join(tempdir, 'debug.log')
+        run_logging(level, filepath)
     assert 'PermissionError' in exc_info.exconly()
 
 
+# @pytest.mark.skip(reason='too slow, works fine')
 def test_error_wrong_url():
     url = 'https://wrong_url'
     with pytest.raises(requests.exceptions.RequestException) as exc_info:

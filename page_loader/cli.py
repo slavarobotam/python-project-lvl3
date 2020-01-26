@@ -1,3 +1,4 @@
+from page_loader.logging import run_logging
 import argparse
 import os
 
@@ -15,12 +16,19 @@ def parse_args(argv):  # argument added for testability
     parser.add_argument('-l', '--level',
                         default='INFO',
                         choices=LEVELS,
-                        help='Level of logging: ["debug", "info"]')
+                        help='Level of output logging: ["debug", "info"]')
     parser.add_argument('-f', '--filepath',
                         action='store',
                         nargs='?',
+                        const='debug.log',
                         type=str,
                         help='Path to log file, for example temp/mylog.log')
 
     args = parser.parse_args(argv)
+    return args
+
+
+def run_cli(argv):
+    args = parse_args(argv)
+    run_logging(args.level, args.filepath)
     return args

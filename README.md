@@ -37,6 +37,7 @@ Levels are `info` (for basic information about the process) or `debug` for maxim
 $ page-loader -f=TEMP/mylog.log https://example.com/
 ```
 If only directory specified, there will be created file `debug.log`.
+If only flag `-f` specified, in cwd will be created file `debug.log`.
 
 ---
 

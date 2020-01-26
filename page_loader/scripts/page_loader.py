@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 
 import sys
-from page_loader.cli import parse_args
-from page_loader.engine import engine
+from page_loader.cli import run_cli
+from page_loader.engine import run_engine
 import requests
 
 
 def main():
-    args = parse_args(sys.argv[1:])  # sys.argv added for testability
     try:
-        engine(args)
+        # sys.argv added for testability
+        args = run_cli(sys.argv[1:])
+        run_engine(args)
+
     except (PermissionError, FileNotFoundError):
         sys.exit(1)
-    except requests.exceptions.RequestException:
+    except (requests.exceptions.HTTPError,
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+            requests.exceptions.RequestException):
+        sys.exit(1)
+    except Exception:
         sys.exit(1)
 
 

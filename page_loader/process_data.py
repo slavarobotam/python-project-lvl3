@@ -44,7 +44,7 @@ def make_paths(resources_data, url, dir_path):
     return resources_data
 
 
-def download_resources(resources_data, dir_path, get_response,
+def download(resources_data, dir_path, get_response,
                         get_content, save, need_dir=True):  # noqa: F811
     """
     Download files to dir_path according the paths in resources dictionary.
@@ -81,13 +81,13 @@ def replace_paths(page_source, resources_data):
     return page_source
 
 
-def process_data(page_source, url, storage_dir):
+def process_data(page_source, url, storage_dir, download, create_path):
     resources_data = get_resources_data(page_source, url)
     if resources_data:
         resources_dir_path = create_path(url, storage_dir, entity_type='dir')
         resources_data = make_paths(resources_data, url, resources_dir_path)
-        download_resources(resources_data, resources_dir_path,
-                           get_response, get_content, write_to_file)
+        download(resources_data, resources_dir_path, get_response, get_content,
+                 write_to_file)
         local_page_source = replace_paths(page_source, resources_data)
     else:
         logging.warning("No resources to download.")

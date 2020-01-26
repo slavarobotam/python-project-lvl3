@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger()
 
 
-def check_scheme(url):
+def _check_scheme(url):
     """Adds scheme to url if it is missing."""
     if not url.startswith('http'):
         url = '{}{}'.format('http://', url)
@@ -16,13 +16,19 @@ def get_response(url, _type='text'):
     """Returns response object.
 
     Raises exception for type 'text', if error occurred.
+    Skipping for other types.
     """
     try:
         response = requests.get(url, timeout=5)
         response.raise_for_status()
-    except requests.exceptions.RequestException as err:
+
+    except (requests.exceptions.HTTPError,
+            requests.exceptions.ConnectionError,
+            requests.exceptions.Timeout,
+            requests.exceptions.RequestException) as err:
         if _type == 'text':
-            logger.error('Error for url {}. Reason: {}'.format(url, str(err)))
+            logger.error('Error for url {}. Please choose another one. '
+                         'Reason: {}'.format(url, str(err)))
             raise
         else:
             logger.debug('Skipping resource {}. '
@@ -38,16 +44,17 @@ def get_content(response, _type='text'):
         if _type == 'img':
             url_content = response.content
         else:
-            response.encoding = 'utf-8'
+            response.encoding = response.apparent_encoding
             url_content = response.text
-    except AttributeError:
-        logger.debug("Can't get content from response object.")
+    except AttributeError as err:
+        logger.debug("Error getting content: {}".format(str(err)))
     else:
         return url_content
 
 
-def get_data(url):
-    url_with_scheme = check_scheme(url)
+def get_data(url, get_response, get_content):
+    url_with_scheme = _check_scheme(url)
     page_response = get_response(url_with_scheme)
     page_source = get_content(page_response)
+    logger.debug('Successfully received data from {}'.format(url))
     return page_source, url_with_scheme
