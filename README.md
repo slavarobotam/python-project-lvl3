@@ -29,7 +29,7 @@ Default storage is your current working directory.
 ```sh
 $ page-loader -l=debug https://example.com/
 ```
-Levels are `info` (for basic information about the process) or `debug` for maximum details.
+Levels are `info` (for basic information about the process) or `debug` (for maximum details).
 
 ---
 **Log file** is created by indicating the path with command `-f` (or `--filepath`):
