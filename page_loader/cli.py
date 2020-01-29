@@ -1,6 +1,7 @@
-from page_loader.logging import run_logging
 import argparse
 import os
+
+from page_loader.logging import run_logging
 
 LEVELS = ['debug', 'info']
 

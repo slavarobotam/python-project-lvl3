@@ -1,7 +1,8 @@
-from page_loader.get_data import get_data, get_response, get_content
-from page_loader.process_data import process_data, download, create_path
-from page_loader.save_data import save_data
 import logging
+
+from page_loader.get_data import get_content, get_data, get_response
+from page_loader.process_data import create_path, download, process_data
+from page_loader.save_data import save_data
 
 logger = logging.getLogger()
 

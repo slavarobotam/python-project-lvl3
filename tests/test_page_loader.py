@@ -1,18 +1,19 @@
+import copy
+import json
+import os
+import tempfile
+from stat import S_IREAD, S_IRGRP, S_IROTH
+
 import pytest  # noqa: F401
+
+import requests
 from page_loader.cli import parse_args, run_cli
 from page_loader.create_path import create_path, make_alphanum
 from page_loader.get_data import _check_scheme, get_data, get_response
-from page_loader.process_data import (get_resources_data, make_paths,
-                                      download, replace_paths, process_data)
-from page_loader.save_data import write_to_file
 from page_loader.logging import run_logging
-import tempfile
-import os
-import json
-import copy
-
-from stat import S_IREAD, S_IRGRP, S_IROTH
-import requests
+from page_loader.process_data import (download, get_resources_data, make_paths,
+                                      process_data, replace_paths)
+from page_loader.save_data import write_to_file
 
 
 @pytest.fixture

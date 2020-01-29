@@ -1,5 +1,6 @@
 import logging
 import os
+
 from page_loader.save_data import ensure_dir
 
 LEVEL_CONFIG = {

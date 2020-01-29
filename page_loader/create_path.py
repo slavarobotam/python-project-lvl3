@@ -1,7 +1,6 @@
+import logging
 import os
 from urllib.parse import urlparse
-import logging
-
 
 DELIMITER = '-'
 SPECIAL_ENTITY_TYPES = {

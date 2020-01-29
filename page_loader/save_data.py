@@ -1,7 +1,7 @@
-from page_loader.create_path import create_path
-import os
 import logging
+import os
 
+from page_loader.create_path import create_path
 
 logger = logging.getLogger()
 

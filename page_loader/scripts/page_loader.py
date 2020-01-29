@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
 import sys
+
+import requests
 from page_loader.cli import run_cli
 from page_loader.engine import run_engine
-import requests
 
 
 def main():
