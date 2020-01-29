@@ -25,25 +25,25 @@ def tempdir():
 @pytest.fixture
 def open_json():
     def open_path(path):
-        with open(path) as filename:
-            return json.load(filename)
+        with open(path) as file_object:
+            return json.load(file_object)
     return open_path
 
 
 @pytest.fixture
 def open_file():
     def open_path(path, mode='r'):
-        with open(path, mode) as filename:
-            return filename.read()
+        with open(path, mode) as file_object:
+            return file_object.read()
     return open_path
 
 
 def test_parse_args():
     argv = 'http://test.com -o=test_dir -l=debug'.split()
     args = parse_args(argv)
-    assert(args.url == 'http://test.com')
-    assert(args.output == 'test_dir')
-    assert(args.level == 'debug')
+    assert args.url == 'http://test.com'
+    assert args.output == 'test_dir'
+    assert args.level == 'debug'
 
 
 def test_run_cli(tempdir):
@@ -199,7 +199,6 @@ def test_run_logging(tempdir):
     assert 'PermissionError' in exc_info.exconly()
 
 
-# @pytest.mark.skip(reason='too slow, works fine')
 def test_error_wrong_url():
     url = 'https://wrong_url'
     with pytest.raises(requests.exceptions.RequestException) as exc_info:
