@@ -19,7 +19,7 @@ def make_alphanum(name):
     return alphanum_name
 
 
-def create_path(url, storage_dir, entity_type=None):
+def normalize(url, storage_dir, entity_type=None):
     """Create name from url for the required entity type: page, dir or None.
 
     If entity type is not None, add appropriate ending.
@@ -33,7 +33,7 @@ def create_path(url, storage_dir, entity_type=None):
     full_path = normalised_url.lstrip(scheme)
 
     # if relative path used, remove leading punctuation
-    full_path = full_path.replace('..', '').strip('/')
+    full_path = full_path.lstrip('./')
 
     # path processing according to entity type
     root, ext = os.path.splitext(full_path)

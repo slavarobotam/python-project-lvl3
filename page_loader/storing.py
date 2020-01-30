@@ -1,7 +1,7 @@
 import logging
 import os
 
-from page_loader.path import create_path
+from page_loader.path import normalize
 
 logger = logging.getLogger()
 
@@ -39,7 +39,7 @@ def write_to_file(content, storage_path, writing_mode='w'):
 
 
 def save_data(url, storage_dir, local_page_source):
-    page_localpath = create_path(url, storage_dir, entity_type='page')
+    page_localpath = normalize(url, storage_dir, entity_type='page')
     ensure_dir(storage_dir)
     write_to_file(local_page_source, page_localpath)
     logger.info('Page available locally at {}'.format(page_localpath))

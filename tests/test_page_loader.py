@@ -11,7 +11,7 @@ from page_loader.cli import parse_args
 from page_loader.engine import run_engine
 from page_loader.fetching import ensure_scheme, fetch_data, get_response
 from page_loader.logging import run_logging
-from page_loader.path import create_path, make_alphanum
+from page_loader.path import make_alphanum, normalize
 from page_loader.processing import (download, get_resources_data, make_paths,
                                     process_data, replace_paths)
 from page_loader.storing import write_to_file
@@ -96,8 +96,8 @@ def test_make_paths(open_json):
     ('page', 'https://example.com', 'example-com.html'),
     ('dir', 'https://xkcd.com/353/', 'xkcd-com-353_files'),
     (None, '2001/IridClouds_1500.jpg', '2001-IridClouds-1500.jpg')])
-def test_create_path(tempdir, entity_type, url, expected_name):
-    result = create_path(url, tempdir, entity_type)
+def test_normalize(tempdir, entity_type, url, expected_name):
+    result = normalize(url, tempdir, entity_type)
     expected_result = os.path.join(tempdir, expected_name)
     assert expected_result == result
 
@@ -106,12 +106,12 @@ def test_create_path(tempdir, entity_type, url, expected_name):
     ('page', 'https://example.com', 'example-com.html'),
     ('dir', 'https://xkcd.com/353/', 'xkcd-com-353_files'),
     (None, '2001/IridClouds_1500.jpg', '2001-IridClouds-1500.jpg')])
-def test_create_path_none_dir(monkeypatch, tempdir, entity_type, url,
-                              expected_name):
+def test_normalize_none_dir(monkeypatch, tempdir, entity_type, url,
+                            expected_name):
     def mock_getcwd():
         return tempdir
     monkeypatch.setattr(os, 'getcwd', mock_getcwd)
-    result = create_path(url, None, entity_type)
+    result = normalize(url, None, entity_type)
     expected_result = os.path.join(tempdir, expected_name)
     assert expected_result == result
 

@@ -8,7 +8,7 @@ logger = logging.getLogger()
 def ensure_scheme(url):
     """Adds scheme to url if it is missing."""
     if not url.startswith('http'):
-        url = '{}{}'.format('http://', url)
+        url = '{}{}'.format('http://', url.lstrip('./'))
     return url
 
 

@@ -4,8 +4,8 @@ from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 from progress.bar import IncrementalBar
 
-from page_loader.fetching import get_content, get_response
-from page_loader.path import create_path
+from page_loader.fetching import ensure_scheme, get_content, get_response
+from page_loader.path import normalize
 from page_loader.storing import ensure_dir, write_to_file
 
 logger = logging.getLogger()
@@ -37,10 +37,9 @@ def make_paths(resources_data, url, dir_path):
     for resource, data in resources_data.items():
         resource_url = urljoin(url, resource)
         logging.debug("Resource {}, url {}".format(resource, resource_url))
-        if resource_url.startswith('//'):
-            resource_url = '{}{}'.format('http:', resource_url)
+        ensure_scheme(resource_url)
         data['url'] = resource_url
-        local_path = create_path(resource_url, dir_path)
+        local_path = normalize(resource_url, dir_path)
         data['local_path'] = local_path
     return resources_data
 
@@ -82,10 +81,10 @@ def replace_paths(page_source, resources_data):
     return page_source
 
 
-def process_data(page_source, url, storage_dir, download, create_path):
+def process_data(page_source, url, storage_dir, download, normalize):
     resources_data = get_resources_data(page_source, url)
     if resources_data:
-        resources_dir_path = create_path(url, storage_dir, entity_type='dir')
+        resources_dir_path = normalize(url, storage_dir, entity_type='dir')
         resources_data = make_paths(resources_data, url, resources_dir_path)
         download(resources_data, resources_dir_path, get_response, get_content,
                  write_to_file)
