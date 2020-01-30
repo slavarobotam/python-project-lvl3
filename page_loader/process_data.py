@@ -2,10 +2,11 @@ import logging
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
+from progress.bar import IncrementalBar
+
 from page_loader.create_path import create_path
 from page_loader.get_data import get_content, get_response
 from page_loader.save_data import ensure_dir, write_to_file
-from progress.bar import IncrementalBar
 
 logger = logging.getLogger()
 

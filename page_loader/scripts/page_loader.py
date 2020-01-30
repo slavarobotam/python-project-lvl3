@@ -2,25 +2,15 @@
 
 import sys
 
-import requests
-from page_loader.cli import run_cli
+from page_loader.cli import parse_args
 from page_loader.engine import run_engine
+from page_loader.logging import run_logging
 
 
 def main():
-    try:
-        # sys.argv added for testability
-        args = run_cli(sys.argv[1:])
-        run_engine(args)
-
-    except (PermissionError, FileNotFoundError):
-        sys.exit(1)
-    except (requests.exceptions.HTTPError,
-            requests.exceptions.ConnectionError,
-            requests.exceptions.Timeout,
-            requests.exceptions.RequestException):
-        sys.exit(1)
-    except Exception:
+    args = parse_args(sys.argv[1:])
+    run_logging(args.level, args.filepath)
+    if not run_engine(args):
         sys.exit(1)
 
 

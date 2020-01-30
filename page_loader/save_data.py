@@ -8,7 +8,7 @@ logger = logging.getLogger()
 
 def ensure_dir(storage_dir):
     try:
-        dir_path = os.path.join(os.getcwd(), storage_dir)
+        dir_path = os.path.join(os.getcwd(), str(storage_dir or ''))
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
         logger.debug('Directory created: {}'.format(dir_path))

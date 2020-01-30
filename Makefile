@@ -22,4 +22,7 @@ publish:
 	@poetry publish -r ott45
 
 test-run:
-	@poetry run page-loader -o=TEMP -f=TEMP -l=info apod.nasa.gov
+	@poetry run page-loader -o=TEMP -f=TEMP -l=info https://example.com/
+
+sort:
+	@isort -rc .

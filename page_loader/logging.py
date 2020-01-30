@@ -3,10 +3,13 @@ import os
 
 from page_loader.save_data import ensure_dir
 
+LEVELS = (DEBUG, INFO) = ('debug', 'info')
 LEVEL_CONFIG = {
-    'debug': logging.DEBUG,
-    'info': logging.INFO
+    DEBUG: logging.DEBUG,
+    INFO: logging.INFO
 }
+DEFAULT_LOGFILE_LEVEL = DEBUG
+DEFAULT_STDOUT_LEVEL = INFO
 
 
 def run_logging(level, filepath):
@@ -31,7 +34,8 @@ def run_logging(level, filepath):
             logfile_path = os.path.join(logfile_path, 'debug.log')
 
         handler_logfile = logging.FileHandler(logfile_path, mode='w')
-        handler_logfile.setLevel(logging.DEBUG)
+        logfile_level = LEVEL_CONFIG[DEFAULT_LOGFILE_LEVEL]
+        handler_logfile.setLevel(logfile_level)
         format_for_logfile = logging.Formatter(
             '%(asctime)s | %(filename)-18.18s | %(levelname)-5.5s | '
             '%(message)s')

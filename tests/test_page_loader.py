@@ -5,10 +5,11 @@ import tempfile
 from stat import S_IREAD, S_IRGRP, S_IROTH
 
 import pytest  # noqa: F401
-
 import requests
-from page_loader.cli import parse_args, run_cli
+
+from page_loader.cli import parse_args
 from page_loader.create_path import create_path, make_alphanum
+from page_loader.engine import run_engine
 from page_loader.get_data import _check_scheme, get_data, get_response
 from page_loader.logging import run_logging
 from page_loader.process_data import (download, get_resources_data, make_paths,
@@ -39,21 +40,11 @@ def open_file():
 
 
 def test_parse_args():
-    argv = 'http://test.com -o=test_dir -l=debug'.split()
+    argv = '-o=test_dir -l=debug http://test.com'.split()
     args = parse_args(argv)
     assert args.url == 'http://test.com'
     assert args.output == 'test_dir'
     assert args.level == 'debug'
-
-
-def test_run_cli(tempdir):
-    url = 'http://test.com'
-    storage = '-o={}'.format(tempdir)
-    level = '-l=debug'
-    args = run_cli([url, storage, level])
-    assert(args.url == 'http://test.com')
-    assert(args.output == tempdir)
-    assert(args.level == 'debug')
 
 
 @pytest.mark.parametrize('url, expected_result', [
@@ -107,6 +98,20 @@ def test_make_paths(open_json):
     (None, '2001/IridClouds_1500.jpg', '2001-IridClouds-1500.jpg')])
 def test_create_path(tempdir, entity_type, url, expected_name):
     result = create_path(url, tempdir, entity_type)
+    expected_result = os.path.join(tempdir, expected_name)
+    assert expected_result == result
+
+
+@pytest.mark.parametrize('entity_type, url, expected_name', [
+    ('page', 'https://example.com', 'example-com.html'),
+    ('dir', 'https://xkcd.com/353/', 'xkcd-com-353_files'),
+    (None, '2001/IridClouds_1500.jpg', '2001-IridClouds-1500.jpg')])
+def test_create_path_none_dir(monkeypatch, tempdir, entity_type, url,
+                              expected_name):
+    def mock_getcwd():
+        return tempdir
+    monkeypatch.setattr(os, 'getcwd', mock_getcwd)
+    result = create_path(url, None, entity_type)
     expected_result = os.path.join(tempdir, expected_name)
     assert expected_result == result
 
@@ -212,3 +217,12 @@ def test_error_no_directory():
     with pytest.raises(FileNotFoundError) as exc_info:
         write_to_file(content, storage_path, 'w')
     assert 'FileNotFoundError' in exc_info.exconly()
+
+
+@pytest.mark.parametrize('url, expected_result', [
+    ('http://example.com', True),
+    ('http://wrong_url', False)])
+def test_engine(url, expected_result):
+    args = parse_args([url])
+    result = run_engine(args)
+    assert expected_result == result

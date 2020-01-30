@@ -45,6 +45,6 @@ def create_path(url, storage_dir, entity_type=None):
         ending = ext
 
     full_name = '{}{}'.format(alphanum_name, ending)
-    path = os.path.join(os.getcwd(), storage_dir, full_name)
+    path = os.path.join(os.getcwd(), str(storage_dir or ''), full_name)
     logger.debug('Path created: {}'.format(path))
     return path
