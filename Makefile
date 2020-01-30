@@ -20,9 +20,3 @@ lint:
 publish:
 	@poetry build
 	@poetry publish -r ott45
-
-test-run:
-	@poetry run page-loader -o=TEMP -f=TEMP -l=info https://example.com/
-
-x:
-	@poetry run page-loader -o=TEMP -f=TEMP -l=info https://xkcd.com/353/
