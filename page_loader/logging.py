@@ -1,7 +1,7 @@
 import logging
 import os
 
-from page_loader.save_data import ensure_dir
+from page_loader.storing import ensure_dir
 
 LEVELS = (DEBUG, INFO) = ('debug', 'info')
 LEVEL_CONFIG = {
@@ -50,3 +50,4 @@ def run_logging(level, filepath):
     logger.addHandler(handler_stdout)
 
     logging.getLogger().setLevel(logging.DEBUG)
+    logging.debug('Logging works fine')

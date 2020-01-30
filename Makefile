@@ -23,6 +23,3 @@ publish:
 
 test-run:
 	@poetry run page-loader -o=TEMP -f=TEMP -l=info https://example.com/
-
-sort:
-	@isort -rc .

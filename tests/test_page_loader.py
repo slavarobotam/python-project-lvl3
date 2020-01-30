@@ -8,13 +8,13 @@ import pytest  # noqa: F401
 import requests
 
 from page_loader.cli import parse_args
-from page_loader.create_path import create_path, make_alphanum
 from page_loader.engine import run_engine
-from page_loader.get_data import _check_scheme, get_data, get_response
+from page_loader.fetching import _check_scheme, fetch_data, get_response
 from page_loader.logging import run_logging
-from page_loader.process_data import (download, get_resources_data, make_paths,
-                                      process_data, replace_paths)
-from page_loader.save_data import write_to_file
+from page_loader.path import create_path, make_alphanum
+from page_loader.processing import (download, get_resources_data, make_paths,
+                                    process_data, replace_paths)
+from page_loader.storing import write_to_file
 
 
 @pytest.fixture
@@ -55,7 +55,7 @@ def test_check_scheme(url, expected_result):
     assert expected_result == result
 
 
-def test_get_data():
+def test_fetch_data():
     url = 'example.com'
 
     def mock_getresponse(url):
@@ -65,7 +65,7 @@ def test_get_data():
     def mock_getcontent(response):
         source = 'page_source'
         return source
-    result = get_data(url, mock_getresponse, mock_getcontent)
+    result = fetch_data(url, mock_getresponse, mock_getcontent)
     expected_result = ('page_source', 'http://example.com')
     assert expected_result == result
 
@@ -195,7 +195,12 @@ def test_download_resources(open_json, json, expected):
     assert expected == result
 
 
-def test_run_logging(tempdir):
+def test_run_logging(tempdir, caplog):
+    run_logging(level='debug', filepath=tempdir)
+    assert 'Logging works fine' in caplog.text
+
+
+def test_run_logging_error(tempdir):
     os.chmod(tempdir, S_IREAD | S_IRGRP | S_IROTH)
     with pytest.raises(PermissionError) as exc_info:
         level = 'info'

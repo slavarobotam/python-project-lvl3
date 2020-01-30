@@ -52,7 +52,7 @@ def get_content(response, _type='text'):
         return url_content
 
 
-def get_data(url, get_response, get_content):
+def fetch_data(url, get_response, get_content):
     url_with_scheme = _check_scheme(url)
     page_response = get_response(url_with_scheme)
     page_source = get_content(page_response)
