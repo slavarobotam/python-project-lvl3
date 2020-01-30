@@ -5,7 +5,7 @@ import requests
 logger = logging.getLogger()
 
 
-def _check_scheme(url):
+def ensure_scheme(url):
     """Adds scheme to url if it is missing."""
     if not url.startswith('http'):
         url = '{}{}'.format('http://', url)
@@ -28,11 +28,11 @@ def get_response(url, _type='text'):
             requests.exceptions.RequestException) as err:
         if _type == 'text':
             logger.error('Error for url {}. Please choose another one. '
-                         'Reason: {}'.format(url, str(err)))
+                         'Reason: {}'.format(url, err))
             raise
         else:
             logger.debug('Skipping resource {}. '
-                         'Reason: {}'.format(url, str(err)))
+                         'Reason: {}'.format(url, err))
     else:
         logger.debug('Successfully received response from {}'.format(url))
         return response
@@ -47,13 +47,13 @@ def get_content(response, _type='text'):
             response.encoding = response.apparent_encoding
             url_content = response.text
     except AttributeError as err:
-        logger.debug("Error getting content: {}".format(str(err)))
+        logger.debug("Error getting content: {}".format(err))
     else:
         return url_content
 
 
 def fetch_data(url, get_response, get_content):
-    url_with_scheme = _check_scheme(url)
+    url_with_scheme = ensure_scheme(url)
     page_response = get_response(url_with_scheme)
     page_source = get_content(page_response)
     logger.debug('Successfully received data from {}'.format(url))

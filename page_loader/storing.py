@@ -27,11 +27,13 @@ def write_to_file(content, storage_path, writing_mode='w'):
     except FileNotFoundError as err:
         logging.error(
             'Error saving to {}. Error message: {}'.format(storage_path, err))
-        raise FileNotFoundError("FileNotFoundError occured, can't save file.")
+        raise FileNotFoundError(
+            "FileNotFoundError occured, can't save file.") from err
     except PermissionError as err:
         logging.error(
             'Error saving to {}. Error message: {}'.format(storage_path, err))
-        raise PermissionError("PermissionError occured, can't save file.")
+        raise PermissionError(
+            "PermissionError occured, can't save file.") from err
     except TypeError as err:
         logging.debug('TypeError while save attempt: {}'.format(err))
 

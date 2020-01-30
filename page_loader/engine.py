@@ -1,10 +1,6 @@
-import logging
-
 from page_loader.fetching import fetch_data, get_content, get_response
 from page_loader.processing import create_path, download, process_data
 from page_loader.storing import save_data
-
-logger = logging.getLogger()
 
 
 def run_engine(args):

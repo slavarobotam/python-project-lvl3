@@ -29,8 +29,8 @@ def create_path(url, storage_dir, entity_type=None):
 
     # remove scheme
     parsed = urlparse(normalised_url)
-    scheme = '{}:/'.format(parsed.scheme)
-    full_path = normalised_url.replace(scheme, '', 1)
+    scheme = '{}:'.format(parsed.scheme)
+    full_path = normalised_url.lstrip(scheme)
 
     # if relative path used, remove leading punctuation
     full_path = full_path.replace('..', '').strip('/')

@@ -23,3 +23,6 @@ publish:
 
 test-run:
 	@poetry run page-loader -o=TEMP -f=TEMP -l=info https://example.com/
+
+x:
+	@poetry run page-loader -o=TEMP -f=TEMP -l=info https://xkcd.com/353/

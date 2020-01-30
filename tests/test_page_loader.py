@@ -9,7 +9,7 @@ import requests
 
 from page_loader.cli import parse_args
 from page_loader.engine import run_engine
-from page_loader.fetching import _check_scheme, fetch_data, get_response
+from page_loader.fetching import ensure_scheme, fetch_data, get_response
 from page_loader.logging import run_logging
 from page_loader.path import create_path, make_alphanum
 from page_loader.processing import (download, get_resources_data, make_paths,
@@ -50,8 +50,8 @@ def test_parse_args():
 @pytest.mark.parametrize('url, expected_result', [
     ('https://ya.ru', 'https://ya.ru'),
     ('ya.ru', 'http://ya.ru')])
-def test_check_scheme(url, expected_result):
-    result = _check_scheme(url)
+def test_ensure_scheme(url, expected_result):
+    result = ensure_scheme(url)
     assert expected_result == result
 
 
